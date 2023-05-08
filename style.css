@@ -1,0 +1,23 @@
+*{
+    padding: 0;
+    margin: 10px;
+}
+Header{
+    font-size: 35px;
+    font-weight: 300;
+    
+}
+.navbar Ul{
+    display: flex;
+    list-style: none;
+    
+}
+.left{
+    display: flex;
+}
+.right{
+    display: flex;
+}
+img{
+    width: 60px;
+}

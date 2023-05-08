@@ -1,0 +1,23 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.left{
+    width: 300px;
+    height: 200px;
+    background-color: rgb(223, 226, 225);
+    margin-left: 100px;
+   margin-top: 200px;
+}
+h3{
+    margin-left: 100px;
+}
+input{
+    margin-left: 80px;
+}
+button{
+    margin-left: 80px;
+}
+span{
+    margin-left: 200px;
+}

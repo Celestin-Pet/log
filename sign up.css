@@ -1,0 +1,28 @@
+.div2{
+    display: contents;
+    margin-right: 12rem;
+width: 80rem;
+ 
+}
+.field1{
+    background-color: aquamarine;
+    border-radius: 20px;
+    width: 30rem;
+}
+
+.dev2{
+width:  40rem;
+height: 5rem;
+font-size: 3rem;
+}
+#buton{
+    width: 10rem;
+    height: 4rem;
+    font-size: 2rem;
+}
+#but{
+    font-size: 2rem ;
+    width: 10rem;
+    height: 4rem;
+ 
+}

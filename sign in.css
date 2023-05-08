@@ -1,0 +1,22 @@
+.div1{
+    display: contents;
+    margin-right: 14rem;
+    width: 4rem;
+    height: 5rem;
+    justify-content: space-between;
+}
+.field{
+    background-color: aquamarine;
+  width: 15rem;
+  height: 16rem;
+    border-radius: 20px;
+}
+.head{
+    font-size: 24px;
+    margin-right: 12rem;
+    background-color: aqua;
+}
+.buton1{
+    border-radius: 10px;
+   
+}

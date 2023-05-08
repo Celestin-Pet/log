@@ -1,0 +1,25 @@
+body{
+    box-sizing: border-box;
+    padding: 0px;
+    margin: opx;
+}
+.parent{
+    position: fixed;
+    top: 100px;
+    left: 500px;
+    /* border: 2px solid black; */
+    width: 500px;
+    height: 400px;
+    background-color: rgb(185, 66, 150);
+    margin: 20px;
+}
+.btn{
+    padding-left:10px;
+     margin-left: 40px;
+}
+input{
+    margin: 20px;
+}
+h2 {
+    margin-left: 50px;
+}
