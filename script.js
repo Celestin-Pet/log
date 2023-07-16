@@ -1,103 +1,253 @@
 'use strict';
 
-let secretNumber = Math.trunc(Math.random() * 20) + 1;
-let score = 20;
-let highscore = 0;
+const restaurant = {
+  name: 'Classico Italiano',
+  location: 'Via Angelo Tavanti 23, Firenze, Italy',
+  categories: ['Italian', 'Pizzeria', 'Vegetarian', 'Organic'],
+  starterMenu: ['Focaccia', 'Bruschetta', 'Garlic Bread', 'Caprese Salad'],
+  mainMenu: ['Pizza', 'Pasta', 'Risotto'],
 
-// document.querySelector('.check').addEventListener('click', function () {
-//   const guess = Number(document.querySelector('.guess').value);
-//   console.log(secretNumber, guess, typeof guess);
+  openingHours: {
+    thu: {
+      open: 12,
+      close: 22,
+    },
+    fri: {
+      open: 11,
+      close: 23,
+    },
+    sat: {
+      open: 0, // Open 24 hours
+      close: 24,
+    },
+  },
+  order(starterIndex, mainIndex) {
+    return [this.starterMenu[starterIndex], this.mainMenu[mainIndex]];
+  },
 
-//   if (!guess) {
-//     document.querySelector('.message').textContent = '⛔️ No number!';
-//   } else if (guess === secretNumber) {
-//     document.querySelector('.message').textContent = '🎉 Correct Number!';
-//     document.querySelector('.number').textContent = secretNumber;
+  orderDelivery({ starterIndex = 1, mainIndex = 0, time = '20:00', address }) {
+    console.log(
+      `Order received! ${this.starterMenu[starterIndex]} and ${this.mainMenu[mainIndex]} will be delivered to ${address} at ${time}`
+    );
+  },
 
-//     document.querySelector('body').style.backgroundColor = '#60b347';
-//     document.querySelector('.number').style.width = '30rem';
+  orderPasta(ing1, ing2, ing3) {
+    console.log(
+      `Here is your declicious pasta with ${ing1}, ${ing2} and ${ing3}`
+    );
+  },
 
-//     if (score > highscore) {
-//       highscore = score;
-//       document.querySelector('.highscore').textContent = highscore;
-//     }
-//   } else if (guess > secretNumber) {
-//     if (score > 1) {
-//       document.querySelector('.message').textContent = '📈 Too high!';
-//       score--;
-//       document.querySelector('.score').textContent = score;
-//     } else {
-//       document.querySelector('.message').textContent = '💥 You lost the game!';
-//       document.querySelector('.score').textContent = 0;
-//     }
-//   } else if (guess < secretNumber) {
-//     if (score > 1) {
-//       document.querySelector('.message').textContent = '📉 Too low!';
-//       score--;
-//       document.querySelector('.score').textContent = score;
-//     } else {
-//       document.querySelector('.message').textContent = '💥 You lost the game!';
-//       document.querySelector('.score').textContent = 0;
-//     }
-//   }
+  orderPizza(mainIngredient, ...otherIngredients) {
+    console.log(mainIngredient);
+    console.log(otherIngredients);
+  },
+};
+
+// destructuring objects
+
+// const { name, openingHours, categories } = restaurant;
+// console.log(name, openingHours, categories);
+// Classico Italiano
+// {
+//   thu: { open: 12, close: 22 },
+//   fri: { open: 11, close: 23 },
+//   sat: { open: 0, close: 24 }
+// }
+// [ 'Italian', 'Pizzeria', 'Vegetarian', 'Organic' ]
+
+// const { menu = [], openingHours: hours = [] } = restaurant;
+// console.log(menu, hours);
+
+// let a = 1;
+// let b = 2;
+// const obj = { a: 3, b: 4 };
+
+// ({ a, b } = obj);
+// console.log(a, b);
+
+// const {
+//   fri: { open, close },
+// } = openingHours;
+// console.log(open, close);
+
+// const restaurant = {
+//   orderDelivery: function ({ starterIndex, mainIndex, time, address }) {
+//     console.log(starterIndex, mainIndex, time, address);
+//   },
+// };
+
+// restaurant.orderDelivery({
+//   time: '22:30',
+//   address: 'Via del Sole, 21',
+//   mainIndex: 2,
+//   starterIndex: 2,
 // });
 
-///////////////////////////////////////
-// Coding Challenge #1
+// spread operator
 
-/* 
-Implement a game rest functionality, so that the player can make a new guess! Here is how:
+// const arr = [7, 8, 9];
+// const badNewArr = [1, 2, arr[0], arr[1], arr[2]];
+// console.log(badNewArr); // [ 1, 2, 7, 8, 9 ]
 
-1. Select the element with the 'again' class and attach a click event handler
-2. In the handler function, restore initial values of the score and secretNumber variables
-3. Restore the initial conditions of the message, number, score and guess input field
-4. Also restore the original background color (#222) and number width (15rem)
+// const goodNewArr = [...arr];
+// console.log(1, 2, goodNewArr);
 
-GOOD LUCK 😀
-*/
+// const restaurant = {
+//   mainMenu: ['Pizza', 'Pasta', 'Risotto'],
+// };
 
-document.querySelector('.again').addEventListener('click', function () {
-  secretNumber = Math.trunc(Math.random() * 20) + 1;
-  console.log(secretNumber);
+// const menu = [...restaurant.mainMenu, 'Burguer'];
+// console.log(menu); // [ 'Pizza', 'Pasta', 'Risotto', 'Burguer' ]
 
-  score = 20;
-  document.querySelector('.score').textContent = score;
-  document.querySelector('.guess').value = '';
-  document.querySelector('.message').textContent = 'Start guessing...';
-  document.querySelector('.number').textContent = '?';
-  document.querySelector('.number').style.width = '15rem';
-  document.querySelector('body').style.backgroundColor = '#222';
-});
+const name = 'August';
+const letters = [...name, 'o'];
+// console.log(letters);
 
-//////////////////////////////////
-// refactor
+const newRestaurant = { ...restaurant, founder: 'Ana' };
+// console.log(newRestaurant);
 
-document.querySelector('.check').addEventListener('click', function () {
-  const guess = Number(document.querySelector('.guess').value);
-  console.log(secretNumber, guess, typeof guess);
+// spread, right side of =
+const arrSpread = [1, 2, ...[4, 5]];
+// console.log(arrSpread); // [ 1, 2, 4, 5 ]
 
-  if (!guess) {
-    document.querySelector('.message').textContent = '⛔️ No number!';
-  } else if (guess === secretNumber) {
-    document.querySelector('.message').textContent = '🎉 Correct Number!';
-    document.querySelector('.number').textContent = secretNumber;
+const [a, b, ...others] = [1, 2, 3, 4, 5];
+// console.log(a, b, others); // 1 2 [ 3, 4, 5 ]
 
-    document.querySelector('body').style.backgroundColor = '#60b347';
-    document.querySelector('.number').style.width = '30rem';
+const [pizza, , risotto, ...otherFood] = [
+  ...restaurant.mainMenu,
+  ...restaurant.starterMenu,
+];
+// console.log(pizza, risotto, otherFood); // Pizza Risotto [ 'Focaccia', 'Bruschetta', 'Garlic Bread', 'Caprese Salad' ]
 
-    if (score > highscore) {
-      highscore = score;
-      document.querySelector('.highscore').textContent = highscore;
-    }
-  } else if (guess > secretNumber) {
-    if (guess !== secretNumber) {
-      document.querySelector('.message').textContent =
-        guess > secretNumber ? '📈 Too high!' : '📉 Too low!';
-      score--;
-      document.querySelector('.score').textContent = score;
-    } else {
-      document.querySelector('.message').textContent = '💥 You lost the game!';
-      document.querySelector('.score').textContent = 0;
-    }
-  }
-});
+const { sat, ...weekdays } = restaurant.openingHours;
+// console.log(weekdays); // { thu: { open: 12, close: 22 }, fri: { open: 11, close: 23 } }
+
+// const add = function (...numbers) {
+//   console.log(numbers);
+// };
+
+// add(1, 2); // [ 1, 2 ]
+// add(3, 4, 5, 6); // [ 3, 4, 5, 6 ]
+
+// const x = [23, 5, 7];
+// add(...x); // [23, 5, 7]
+
+// short circuiting (&& y ||)
+
+// console.log(3 || 'Lola'); // 3
+// console.log('' || 'Lola'); // 'Lola'
+// console.log(true || 0); // true
+// console.log(undefined || null); // null
+// console.log(undefined || 0 || '' || 'Hello' || 23 || null); // 'Hello'
+
+restaurant.numGuests = 0;
+const guests1 = restaurant.numGuests ? restaurant.numGuests : 10;
+// console.log(guests1); // 10
+
+const guests2 = restaurant.numGuests || 10;
+// console.log(guests2); // 10
+
+// console.log(0 && 'Jonas'); // 0
+// console.log(7 && 'Jonas'); // 'Jonas'
+
+// console.log('Hello' && 23 && null && 'jonas'); // null
+
+if (restaurant.orderPizza) {
+  restaurant.orderPizza('mushrooms', 'spinach');
+}
+
+restaurant.orderPizza && restaurant.orderPizza('mushrooms', 'spinach');
+
+// Nullish: null and undefined (NOT 0 or '')
+
+restaurant.numGuests = 0;
+
+const guestCorrect = restaurant.numGuests ?? 10;
+// console.log(guestCorrect); // 0
+
+//  logical operators
+
+const rest1 = { name: 'Capri', numOfGuests: 0 };
+
+// long way
+rest1.numOfGuests = rest1.numOfGuests || 10;
+
+// short way
+rest1.numOfGuests ||= 10;
+rest1.numOfGuests ??= 10;
+rest1.numOfGuests &&= 10;
+
+// console.log(rest1.numOfGuests)
+
+// looping arrays (for of)
+
+// const menu = [...restaurant.starterMenu, ...restaurant.mainMenu];
+
+// get element
+// for (const item of menu) {
+//   console.log(item); // Focaccia Bruschetta Garlic Bread Caprese Salad Pizza Pasta Risotto
+// }
+
+// get index
+// for (const item of menu.entries()) {
+//   console.log(item) // [ 0, 'Focaccia' ] [ 1, 'Bruschetta' ] [ 2, 'Garlic Bread' ] [ 3, 'Caprese Salad' ] [ 4, 'Pizza' ] [ 5, 'Pasta' ] [ 6, 'Risotto' ]
+// }
+
+// wo destructuring
+// for (const item of menu.entries()) {
+//   console.log(item[0], item[1]);
+// }
+
+// with destructuring
+// for (const [index, element] of menu.entries()) {
+//   console.log(index, element);
+// }
+
+//  computed property names
+// const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+// const openingHours = {
+//   thu: {
+//     open: 12,
+//     close: 22,
+//   },
+// }
+
+// const openingHours = {
+//   [days[3]]: { //
+//     open: 12,
+//     close: 22,
+//   },
+// }
+
+// console.log(openingHours);
+
+// if (restaurant.openingHours && restaurant.openingHours.mon)
+//   console.log(restaurant.openingHours.mon.open);
+
+// console.log(restaurant.openingHours.mon.open);
+
+// WITH optional chaining
+// console.log(restaurant.openingHours.mon?.open);
+// console.log(restaurant.openingHours?.mon?.open);
+
+// const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+// for (const day of days) {
+//   const open = restaurant.openingHours[day]?.open ?? 'closed';
+//   console.log(`On ${day}, we open at ${open}`);
+// }
+
+// Methods
+// console.log(restaurant.order?.(0, 1) ?? 'Method does not exist'); // [ 'Focaccia', 'Pasta' ]
+// console.log(restaurant.orderRisotto?.(0, 1) ?? 'Method does not exist'); // Method does not exist
+
+// Arrays
+const users = [{ name: 'Jonas', email: 'hello@jonas.io' }];
+// const users = [];
+
+// with
+console.log(users[0]?.name ?? 'User array empty');
+
+// wo
+// if (users.length > 0) console.log(users[0].name);
+// else console.log('user array empty');
