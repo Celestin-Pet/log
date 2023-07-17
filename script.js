@@ -1,647 +1,509 @@
 'use strict';
 
-/*
-///////////////////////////////////////
-// Constructor Functions and the new Operator
-const Person = function (firstName, birthYear) {
-  // Instance properties
-  this.firstName = firstName;
-  this.birthYear = birthYear;
-
-  // Never to this!
-  // this.calcAge = function () {
-  //   console.log(2037 - this.birthYear);
-  // };
-};
-
-const jonas = new Person('Jonas', 1991);
-console.log(jonas);
-
-// 1. New {} is created
-// 2. function is called, this = {}
-// 3. {} linked to prototype
-// 4. function automatically return {}
-
-const matilda = new Person('Matilda', 2017);
-const jack = new Person('Jack', 1975);
-
-console.log(jonas instanceof Person);
-
-Person.hey = function () {
-  console.log('Hey there 👋');
-  console.log(this);
-};
-Person.hey();
+const modal = document.querySelector('.modal');
+const overlay = document.querySelector('.overlay');
+const btnCloseModal = document.querySelector('.btn--close-modal');
+const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
+const btnScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+const nav = document.querySelector('.nav');
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
 
 ///////////////////////////////////////
-// Prototypes
-console.log(Person.prototype);
+// Modal window
 
-Person.prototype.calcAge = function () {
-  console.log(2037 - this.birthYear);
+const openModal = function (e) {
+  e.preventDefault();
+  modal.classList.remove('hidden');
+  overlay.classList.remove('hidden');
 };
 
-jonas.calcAge();
-matilda.calcAge();
+const closeModal = function () {
+  modal.classList.add('hidden');
+  overlay.classList.add('hidden');
+};
 
-console.log(jonas.__proto__);
-console.log(jonas.__proto__ === Person.prototype);
+btnsOpenModal.forEach(btn => btn.addEventListener('click', openModal));
 
-console.log(Person.prototype.isPrototypeOf(jonas));
-console.log(Person.prototype.isPrototypeOf(matilda));
-console.log(Person.prototype.isPrototypeOf(Person));
+btnCloseModal.addEventListener('click', closeModal);
+overlay.addEventListener('click', closeModal);
 
-// .prototyeOfLinkedObjects
-
-Person.prototype.species = 'Homo Sapiens';
-console.log(jonas.species, matilda.species);
-
-console.log(jonas.hasOwnProperty('firstName'));
-console.log(jonas.hasOwnProperty('species'));
-
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+    closeModal();
+  }
+});
 
 ///////////////////////////////////////
-// Prototypal Inheritance on Built-In Objects
-console.log(jonas.__proto__);
-// Object.prototype (top of prototype chain)
-console.log(jonas.__proto__.__proto__);
-console.log(jonas.__proto__.__proto__.__proto__);
+// Button scrolling
+btnScrollTo.addEventListener('click', function (e) {
+  const s1coords = section1.getBoundingClientRect();
+  console.log(s1coords);
 
-console.dir(Person.prototype.constructor);
+  console.log(e.target.getBoundingClientRect());
 
-const arr = [3, 6, 6, 5, 6, 9, 9]; // new Array === []
-console.log(arr.__proto__);
-console.log(arr.__proto__ === Array.prototype);
+  console.log('Current scroll (X/Y)', window.pageXOffset, window.pageYOffset);
 
-console.log(arr.__proto__.__proto__);
-
-Array.prototype.unique = function () {
-  return [...new Set(this)];
-};
-
-console.log(arr.unique());
-
-const h1 = document.querySelector('h1');
-console.dir(x => x + 1);
-*/
-
-///////////////////////////////////////
-// Coding Challenge #1
-
-/* 
-1. Use a constructor function to implement a Car. A car has a make and a speed property. The speed property is the current speed of the car in km/h;
-2. Implement an 'accelerate' method that will increase the car's speed by 10, and log the new speed to the console;
-3. Implement a 'brake' method that will decrease the car's speed by 5, and log the new speed to the console;
-4. Create 2 car objects and experiment with calling 'accelerate' and 'brake' multiple times on each of them.
-
-DATA CAR 1: 'BMW' going at 120 km/h
-DATA CAR 2: 'Mercedes' going at 95 km/h
-
-GOOD LUCK 😀
-*/
-
-/*
-const Car = function (make, speed) {
-  this.make = make;
-  this.speed = speed;
-};
-
-Car.prototype.accelerate = function () {
-  this.speed += 10;
-  console.log(`${this.make} is going at ${this.speed} km/h`);
-};
-
-Car.prototype.brake = function () {
-  this.speed -= 5;
-  console.log(`${this.make} is going at ${this.speed} km/h`);
-};
-
-const bmw = new Car('BMW', 120);
-const mercedes = new Car('Mercedes', 95);
-
-bmw.accelerate();
-bmw.accelerate();
-bmw.brake();
-bmw.accelerate();
-
-
-///////////////////////////////////////
-// ES6 Classes
-
-// Class expression
-// const PersonCl = class {}
-
-// Class declaration
-class PersonCl {
-  constructor(fullName, birthYear) {
-    this.fullName = fullName;
-    this.birthYear = birthYear;
-  }
-
-  // Instance methods
-  // Methods will be added to .prototype property
-  calcAge() {
-    console.log(2037 - this.birthYear);
-  }
-
-  greet() {
-    console.log(`Hey ${this.fullName}`);
-  }
-
-  get age() {
-    return 2037 - this.birthYear;
-  }
-
-  // Set a property that already exists
-  set fullName(name) {
-    if (name.includes(' ')) this._fullName = name;
-    else alert(`${name} is not a full name!`);
-  }
-
-  get fullName() {
-    return this._fullName;
-  }
-
-  // Static method
-  static hey() {
-    console.log('Hey there 👋');
-    console.log(this);
-  }
-}
-
-const jessica = new PersonCl('Jessica Davis', 1996);
-console.log(jessica);
-jessica.calcAge();
-console.log(jessica.age);
-
-console.log(jessica.__proto__ === PersonCl.prototype);
-
-// PersonCl.prototype.greet = function () {
-//   console.log(`Hey ${this.firstName}`);
-// };
-jessica.greet();
-
-// 1. Classes are NOT hoisted
-// 2. Classes are first-class citizes
-// 3. Classes are executed in strict mode
-
-const walter = new PersonCl('Walter White', 1965);
-// PersonCl.hey();
-
-
-///////////////////////////////////////
-// Setters and Getters
-const account = {
-  owner: 'Jonas',
-  movements: [200, 530, 120, 300],
-
-  get latest() {
-    return this.movements.slice(-1).pop();
-  },
-
-  set latest(mov) {
-    this.movements.push(mov);
-  },
-};
-
-console.log(account.latest);
-
-account.latest = 50;
-console.log(account.movements);
-
-
-///////////////////////////////////////
-// Object.create
-const PersonProto = {
-  calcAge() {
-    console.log(2037 - this.birthYear);
-  },
-
-  init(firstName, birthYear) {
-    this.firstName = firstName;
-    this.birthYear = birthYear;
-  },
-};
-
-const steven = Object.create(PersonProto);
-console.log(steven);
-steven.name = 'Steven';
-steven.birthYear = 2002;
-steven.calcAge();
-
-console.log(steven.__proto__ === PersonProto);
-
-const sarah = Object.create(PersonProto);
-sarah.init('Sarah', 1979);
-sarah.calcAge();
-*/
-
-///////////////////////////////////////
-// Coding Challenge #2
-
-/* 
-1. Re-create challenge 1, but this time using an ES6 class;
-2. Add a getter called 'speedUS' which returns the current speed in mi/h (divide by 1.6);
-3. Add a setter called 'speedUS' which sets the current speed in mi/h (but converts it to km/h before storing the value, by multiplying the input by 1.6);
-4. Create a new car and experiment with the accelerate and brake methods, and with the getter and setter.
-
-DATA CAR 1: 'Ford' going at 120 km/h
-
-GOOD LUCK 😀
-*/
-
-/*
-class CarCl {
-  constructor(make, speed) {
-    this.make = make;
-    this.speed = speed;
-  }
-
-  accelerate() {
-    this.speed += 10;
-    console.log(`${this.make} is going at ${this.speed} km/h`);
-  }
-
-  brake() {
-    this.speed -= 5;
-    console.log(`${this.make} is going at ${this.speed} km/h`);
-  }
-
-  get speedUS() {
-    return this.speed / 1.6;
-  }
-
-  set speedUS(speed) {
-    this.speed = speed * 1.6;
-  }
-}
-
-const ford = new CarCl('Ford', 120);
-console.log(ford.speedUS);
-ford.accelerate();
-ford.accelerate();
-ford.brake();
-ford.speedUS = 50;
-console.log(ford);
-
-
-///////////////////////////////////////
-// Inheritance Between "Classes": Constructor Functions
-
-const Person = function (firstName, birthYear) {
-  this.firstName = firstName;
-  this.birthYear = birthYear;
-};
-
-Person.prototype.calcAge = function () {
-  console.log(2037 - this.birthYear);
-};
-
-const Student = function (firstName, birthYear, course) {
-  Person.call(this, firstName, birthYear);
-  this.course = course;
-};
-
-// Linking prototypes
-Student.prototype = Object.create(Person.prototype);
-
-Student.prototype.introduce = function () {
-  console.log(`My name is ${this.firstName} and I study ${this.course}`);
-};
-
-const mike = new Student('Mike', 2020, 'Computer Science');
-mike.introduce();
-mike.calcAge();
-
-console.log(mike.__proto__);
-console.log(mike.__proto__.__proto__);
-
-console.log(mike instanceof Student);
-console.log(mike instanceof Person);
-console.log(mike instanceof Object);
-
-Student.prototype.constructor = Student;
-console.dir(Student.prototype.constructor);
-*/
-
-///////////////////////////////////////
-// Coding Challenge #3
-
-/* 
-1. Use a constructor function to implement an Electric Car (called EV) as a CHILD "class" of Car. Besides a make and current speed, the EV also has the current battery charge in % ('charge' property);
-2. Implement a 'chargeBattery' method which takes an argument 'chargeTo' and sets the battery charge to 'chargeTo';
-3. Implement an 'accelerate' method that will increase the car's speed by 20, and decrease the charge by 1%. Then log a message like this: 'Tesla going at 140 km/h, with a charge of 22%';
-4. Create an electric car object and experiment with calling 'accelerate', 'brake' and 'chargeBattery' (charge to 90%). Notice what happens when you 'accelerate'! HINT: Review the definiton of polymorphism 😉
-
-DATA CAR 1: 'Tesla' going at 120 km/h, with a charge of 23%
-
-GOOD LUCK 😀
-*/
-
-/*
-const Car = function (make, speed) {
-  this.make = make;
-  this.speed = speed;
-};
-
-Car.prototype.accelerate = function () {
-  this.speed += 10;
-  console.log(`${this.make} is going at ${this.speed} km/h`);
-};
-
-Car.prototype.brake = function () {
-  this.speed -= 5;
-  console.log(`${this.make} is going at ${this.speed} km/h`);
-};
-
-const EV = function (make, speed, charge) {
-  Car.call(this, make, speed);
-  this.charge = charge;
-};
-
-// Link the prototypes
-EV.prototype = Object.create(Car.prototype);
-
-EV.prototype.chargeBattery = function (chargeTo) {
-  this.charge = chargeTo;
-};
-
-EV.prototype.accelerate = function () {
-  this.speed += 20;
-  this.charge--;
   console.log(
-    `${this.make} is going at ${this.speed} km/h, with a charge of ${this.charge}`
+    'height/width viewport',
+    document.documentElement.clientHeight,
+    document.documentElement.clientWidth
   );
-};
 
-const tesla = new EV('Tesla', 120, 23);
-tesla.chargeBattery(90);
-console.log(tesla);
-tesla.brake();
-tesla.accelerate();
+  // Scrolling
+  // window.scrollTo(
+  //   s1coords.left + window.pageXOffset,
+  //   s1coords.top + window.pageYOffset
+  // );
 
+  // window.scrollTo({
+  //   left: s1coords.left + window.pageXOffset,
+  //   top: s1coords.top + window.pageYOffset,
+  //   behavior: 'smooth',
+  // });
+
+  section1.scrollIntoView({ behavior: 'smooth' });
+});
 
 ///////////////////////////////////////
-// Inheritance Between "Classes": ES6 Classes
+// Page navigation
 
-class PersonCl {
-  constructor(fullName, birthYear) {
-    this.fullName = fullName;
-    this.birthYear = birthYear;
+// document.querySelectorAll('.nav__link').forEach(function (el) {
+//   el.addEventListener('click', function (e) {
+//     e.preventDefault();
+//     const id = this.getAttribute('href');
+//     console.log(id);
+//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+//   });
+// });
+
+// 1. Add event listener to common parent element
+// 2. Determine what element originated the event
+
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  e.preventDefault();
+
+  // Matching strategy
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
+    document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
   }
+});
 
-  // Instance methods
-  calcAge() {
-    console.log(2037 - this.birthYear);
+///////////////////////////////////////
+// Tabbed component
+
+tabsContainer.addEventListener('click', function (e) {
+  const clicked = e.target.closest('.operations__tab');
+
+  // Guard clause
+  if (!clicked) return;
+
+  // Remove active classes
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
+
+  // Activate tab
+  clicked.classList.add('operations__tab--active');
+
+  // Activate content area
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
+    .classList.add('operations__content--active');
+});
+
+///////////////////////////////////////
+// Menu fade animation
+const handleHover = function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = this;
+    });
+    logo.style.opacity = this;
   }
+};
 
-  greet() {
-    console.log(`Hey ${this.fullName}`);
-  }
+// Passing "argument" into handler
+nav.addEventListener('mouseover', handleHover.bind(0.5));
+nav.addEventListener('mouseout', handleHover.bind(1));
 
-  get age() {
-    return 2037 - this.birthYear;
-  }
+///////////////////////////////////////
+// Sticky navigation: Intersection Observer API
 
-  set fullName(name) {
-    if (name.includes(' ')) this._fullName = name;
-    else alert(`${name} is not a full name!`);
-  }
+const header = document.querySelector('.header');
+const navHeight = nav.getBoundingClientRect().height;
 
-  get fullName() {
-    return this._fullName;
-  }
+const stickyNav = function (entries) {
+  const [entry] = entries;
+  // console.log(entry);
 
-  // Static method
-  static hey() {
-    console.log('Hey there 👋');
-  }
-}
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
 
-class StudentCl extends PersonCl {
-  constructor(fullName, birthYear, course) {
-    // Always needs to happen first!
-    super(fullName, birthYear);
-    this.course = course;
-  }
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${navHeight}px`,
+});
 
-  introduce() {
-    console.log(`My name is ${this.fullName} and I study ${this.course}`);
-  }
+headerObserver.observe(header);
 
-  calcAge() {
-    console.log(
-      `I'm ${
-        2037 - this.birthYear
-      } years old, but as a student I feel more like ${
-        2037 - this.birthYear + 10
-      }`
+///////////////////////////////////////
+// Reveal sections
+const allSections = document.querySelectorAll('.section');
+
+const revealSection = function (entries, observer) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+
+  entry.target.classList.remove('section--hidden');
+  observer.unobserve(entry.target);
+};
+
+const sectionObserver = new IntersectionObserver(revealSection, {
+  root: null,
+  threshold: 0.15,
+});
+
+allSections.forEach(function (section) {
+  sectionObserver.observe(section);
+  section.classList.add('section--hidden');
+});
+
+// Lazy loading images
+const imgTargets = document.querySelectorAll('img[data-src]');
+
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+
+  if (!entry.isIntersecting) return;
+
+  // Replace src with data-src
+  entry.target.src = entry.target.dataset.src;
+
+  entry.target.addEventListener('load', function () {
+    entry.target.classList.remove('lazy-img');
+  });
+
+  observer.unobserve(entry.target);
+};
+
+const imgObserver = new IntersectionObserver(loadImg, {
+  root: null,
+  threshold: 0,
+  rootMargin: '200px',
+});
+
+imgTargets.forEach(img => imgObserver.observe(img));
+
+///////////////////////////////////////
+// Slider
+const slider = function () {
+  const slides = document.querySelectorAll('.slide');
+  const btnLeft = document.querySelector('.slider__btn--left');
+  const btnRight = document.querySelector('.slider__btn--right');
+  const dotContainer = document.querySelector('.dots');
+
+  let curSlide = 0;
+  const maxSlide = slides.length;
+
+  // Functions
+  const createDots = function () {
+    slides.forEach(function (_, i) {
+      dotContainer.insertAdjacentHTML(
+        'beforeend',
+        `<button class="dots__dot" data-slide="${i}"></button>`
+      );
+    });
+  };
+
+  const activateDot = function (slide) {
+    document
+      .querySelectorAll('.dots__dot')
+      .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+    document
+      .querySelector(`.dots__dot[data-slide="${slide}"]`)
+      .classList.add('dots__dot--active');
+  };
+
+  const goToSlide = function (slide) {
+    slides.forEach(
+      (s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`)
     );
-  }
-}
+  };
 
-const martha = new StudentCl('Martha Jones', 2012, 'Computer Science');
-martha.introduce();
-martha.calcAge();
-
-
-///////////////////////////////////////
-// Inheritance Between "Classes": Object.create
-
-const PersonProto = {
-  calcAge() {
-    console.log(2037 - this.birthYear);
-  },
-
-  init(firstName, birthYear) {
-    this.firstName = firstName;
-    this.birthYear = birthYear;
-  },
-};
-
-const steven = Object.create(PersonProto);
-
-const StudentProto = Object.create(PersonProto);
-StudentProto.init = function (firstName, birthYear, course) {
-  PersonProto.init.call(this, firstName, birthYear);
-  this.course = course;
-};
-
-StudentProto.introduce = function () {
-  console.log(`My name is ${this.fullName} and I study ${this.course}`);
-};
-
-const jay = Object.create(StudentProto);
-jay.init('Jay', 2010, 'Compuetr Science');
-jay.introduce();
-jay.calcAge();
-
-
-///////////////////////////////////////
-// Encapsulation: Protected Properties and Methods
-// Encapsulation: Private Class Fields and Methods
-
-// 1) Public fields
-// 2) Private fields
-// 3) Public methods
-// 4) Private methods
-// (there is also the static version)
-
-class Account {
-  // 1) Public fields (instances)
-  locale = navigator.language;
-
-  // 2) Private fields (instances)
-  #movements = [];
-  #pin;
-
-  constructor(owner, currency, pin) {
-    this.owner = owner;
-    this.currency = currency;
-    this.#pin = pin;
-
-    // Protected property
-    // this._movements = [];
-    // this.locale = navigator.language;
-
-    console.log(`Thanks for opening an account, ${owner}`);
-  }
-
-  // 3) Public methods
-
-  // Public interface
-  getMovements() {
-    return this.#movements;
-  }
-
-  deposit(val) {
-    this.#movements.push(val);
-    return this;
-  }
-
-  withdraw(val) {
-    this.deposit(-val);
-    return this;
-  }
-
-  requestLoan(val) {
-    // if (this.#approveLoan(val)) {
-    if (this._approveLoan(val)) {
-      this.deposit(val);
-      console.log(`Loan approved`);
-      return this;
+  // Next slide
+  const nextSlide = function () {
+    if (curSlide === maxSlide - 1) {
+      curSlide = 0;
+    } else {
+      curSlide++;
     }
-  }
 
-  static helper() {
-    console.log('Helper');
-  }
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
 
-  // 4) Private methods
-  // #approveLoan(val) {
-  _approveLoan(val) {
-    return true;
-  }
-}
+  const prevSlide = function () {
+    if (curSlide === 0) {
+      curSlide = maxSlide - 1;
+    } else {
+      curSlide--;
+    }
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
 
-const acc1 = new Account('Jonas', 'EUR', 1111);
+  const init = function () {
+    goToSlide(0);
+    createDots();
 
-// acc1._movements.push(250);
-// acc1._movements.push(-140);
-// acc1.approveLoan(1000);
+    activateDot(0);
+  };
+  init();
 
-acc1.deposit(250);
-acc1.withdraw(140);
-acc1.requestLoan(1000);
-console.log(acc1.getMovements());
-console.log(acc1);
-Account.helper();
+  // Event handlers
+  btnRight.addEventListener('click', nextSlide);
+  btnLeft.addEventListener('click', prevSlide);
 
-// console.log(acc1.#movements);
-// console.log(acc1.#pin);
-// console.log(acc1.#approveLoan(100));
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') prevSlide();
+    e.key === 'ArrowRight' && nextSlide();
+  });
 
-// Chaining
-acc1.deposit(300).deposit(500).withdraw(35).requestLoan(25000).withdraw(4000);
-console.log(acc1.getMovements());
-*/
+  dotContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains('dots__dot')) {
+      const { slide } = e.target.dataset;
+      goToSlide(slide);
+      activateDot(slide);
+    }
+  });
+};
+slider();
 
 ///////////////////////////////////////
-// Coding Challenge #4
-
-/* 
-1. Re-create challenge #3, but this time using ES6 classes: create an 'EVCl' child class of the 'CarCl' class
-2. Make the 'charge' property private;
-3. Implement the ability to chain the 'accelerate' and 'chargeBattery' methods of this class, and also update the 'brake' method in the 'CarCl' class. They experiment with chining!
-
-DATA CAR 1: 'Rivian' going at 120 km/h, with a charge of 23%
-
-GOOD LUCK 😀
-*/
+///////////////////////////////////////
+///////////////////////////////////////
 
 /*
-class CarCl {
-  constructor(make, speed) {
-    this.make = make;
-    this.speed = speed;
-  }
+///////////////////////////////////////
+// Selecting, Creating, and Deleting Elements
 
-  accelerate() {
-    this.speed += 10;
-    console.log(`${this.make} is going at ${this.speed} km/h`);
-  }
+// Selecting elements
+console.log(document.documentElement);
+console.log(document.head);
+console.log(document.body);
 
-  brake() {
-    this.speed -= 5;
-    console.log(`${this.make} is going at ${this.speed} km/h`);
-    return this;
-  }
+const header = document.querySelector('.header');
+const allSections = document.querySelectorAll('.section');
+console.log(allSections);
 
-  get speedUS() {
-    return this.speed / 1.6;
-  }
+document.getElementById('section--1');
+const allButtons = document.getElementsByTagName('button');
+console.log(allButtons);
 
-  set speedUS(speed) {
-    this.speed = speed * 1.6;
-  }
-}
+console.log(document.getElementsByClassName('btn'));
 
-class EVCl extends CarCl {
-  #charge;
+// Creating and inserting elements
+const message = document.createElement('div');
+message.classList.add('cookie-message');
+// message.textContent = 'We use cookied for improved functionality and analytics.';
+message.innerHTML =
+  'We use cookied for improved functionality and analytics. <button class="btn btn--close-cookie">Got it!</button>';
 
-  constructor(make, speed, charge) {
-    super(make, speed);
-    this.#charge = charge;
-  }
+// header.prepend(message);
+header.append(message);
+// header.append(message.cloneNode(true));
 
-  chargeBattery(chargeTo) {
-    this.#charge = chargeTo;
-    return this;
-  }
+// header.before(message);
+// header.after(message);
 
-  accelerate() {
-    this.speed += 20;
-    this.#charge--;
-    console.log(
-      `${this.make} is going at ${this.speed} km/h, with a charge of ${
-        this.#charge
-      }`
-    );
-    return this;
-  }
-}
+// Delete elements
+document
+  .querySelector('.btn--close-cookie')
+  .addEventListener('click', function () {
+    // message.remove();
+    message.parentElement.removeChild(message);
+  });
 
-const rivian = new EVCl('Rivian', 120, 23);
-console.log(rivian);
-// console.log(rivian.#charge);
-rivian
-  .accelerate()
-  .accelerate()
-  .accelerate()
-  .brake()
-  .chargeBattery(50)
-  .accelerate();
+  
+///////////////////////////////////////
+// Styles, Attributes and Classes
+  
+// Styles
+message.style.backgroundColor = '#37383d';
+message.style.width = '120%';
 
-console.log(rivian.speedUS);
+console.log(message.style.color);
+console.log(message.style.backgroundColor);
+
+console.log(getComputedStyle(message).color);
+console.log(getComputedStyle(message).height);
+
+message.style.height =
+  Number.parseFloat(getComputedStyle(message).height, 10) + 30 + 'px';
+
+document.documentElement.style.setProperty('--color-primary', 'orangered');
+
+// Attributes
+const logo = document.querySelector('.nav__logo');
+console.log(logo.alt);
+console.log(logo.className);
+
+logo.alt = 'Beautiful minimalist logo';
+
+// Non-standard
+console.log(logo.designer);
+console.log(logo.getAttribute('designer'));
+logo.setAttribute('company', 'Bankist');
+
+console.log(logo.src);
+console.log(logo.getAttribute('src'));
+
+const link = document.querySelector('.nav__link--btn');
+console.log(link.href);
+console.log(link.getAttribute('href'));
+
+// Data attributes
+console.log(logo.dataset.versionNumber);
+
+// Classes
+logo.classList.add('c', 'j');
+logo.classList.remove('c', 'j');
+logo.classList.toggle('c');
+logo.classList.contains('c'); // not includes
+
+// Don't use
+logo.clasName = 'jonas';
+
+
+///////////////////////////////////////
+// Types of Events and Event Handlers
+const h1 = document.querySelector('h1');
+
+const alertH1 = function (e) {
+  alert('addEventListener: Great! You are reading the heading :D');
+};
+
+h1.addEventListener('mouseenter', alertH1);
+
+setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 3000);
+
+// h1.onmouseenter = function (e) {
+//   alert('onmouseenter: Great! You are reading the heading :D');
+// };
+
+
+///////////////////////////////////////
+// Event Propagation in Practice
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
+const randomColor = () =>
+  `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
+
+document.querySelector('.nav__link').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('LINK', e.target, e.currentTarget);
+  console.log(e.currentTarget === this);
+
+  // Stop propagation
+  // e.stopPropagation();
+});
+
+document.querySelector('.nav__links').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('CONTAINER', e.target, e.currentTarget);
+});
+
+document.querySelector('.nav').addEventListener('click', function (e) {
+  this.style.backgroundColor = randomColor();
+  console.log('NAV', e.target, e.currentTarget);
+});
+
+
+///////////////////////////////////////
+// DOM Traversing
+const h1 = document.querySelector('h1');
+
+// Going downwards: child
+console.log(h1.querySelectorAll('.highlight'));
+console.log(h1.childNodes);
+console.log(h1.children);
+h1.firstElementChild.style.color = 'white';
+h1.lastElementChild.style.color = 'orangered';
+
+// Going upwards: parents
+console.log(h1.parentNode);
+console.log(h1.parentElement);
+
+h1.closest('.header').style.background = 'var(--gradient-secondary)';
+
+h1.closest('h1').style.background = 'var(--gradient-primary)';
+
+// Going sideways: siblings
+console.log(h1.previousElementSibling);
+console.log(h1.nextElementSibling);
+
+console.log(h1.previousSibling);
+console.log(h1.nextSibling);
+
+console.log(h1.parentElement.children);
+[...h1.parentElement.children].forEach(function (el) {
+  if (el !== h1) el.style.transform = 'scale(0.5)';
+});
+
+///////////////////////////////////////
+// Sticky navigation
+const initialCoords = section1.getBoundingClientRect();
+console.log(initialCoords);
+
+window.addEventListener('scroll', function () {
+  console.log(window.scrollY);
+
+  if (window.scrollY > initialCoords.top) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+});
+
+///////////////////////////////////////
+// Sticky navigation: Intersection Observer API
+
+const obsCallback = function (entries, observer) {
+  entries.forEach(entry => {
+    console.log(entry);
+  });
+};
+
+const obsOptions = {
+  root: null,
+  threshold: [0, 0.2],
+};
+
+const observer = new IntersectionObserver(obsCallback, obsOptions);
+observer.observe(section1);
+
+
+///////////////////////////////////////
+// Lifecycle DOM Events
+document.addEventListener('DOMContentLoaded', function (e) {
+  console.log('HTML parsed and DOM tree built!', e);
+});
+
+window.addEventListener('load', function (e) {
+  console.log('Page fully loaded', e);
+});
+
+window.addEventListener('beforeunload', function (e) {
+  e.preventDefault();
+  console.log(e);
+  e.returnValue = '';
+});
 */
-
